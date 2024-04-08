@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epoch Time Converter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" integrity="sha512-wnea99uKIC3TJF7v4eKk4Y+lMz2Mklv18+r4na2Gn1abDRPPOeef95xTzdwGD9e6zXJBteMIhZ1+68QC5byJZw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col justify-center items-center">
+    <h2 class="text-3xl font-semibold mb-3">Epoch Time Converter</h2>
+    <div class="container bg-white rounded-md shadow-md p-6 mb-6 w-full max-w-md">
+        <label for="epochInput" class="block mb-2">Epoch Time:</label>
+        <input type="text" id="epochInput" placeholder="Enter Epoch Time" class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4">
+        <button id="convertEpochToLocalBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Convert</button>
+        <div id="localOutput" class="mt-4"></div>
+        <div id="utcOutput"></div>
+    </div>
+    <div class="container bg-white rounded-md shadow-md p-6 w-full max-w-md">
+        <label for="dateInput" class="block mb-2">Local Date:</label>
+        <input type="date" id="dateInput" class="border border-gray-300 px-3 py-2 rounded-md mb-4">
+        <label for="timeInput" class="block mb-2">Local Time:</label>
+        <input type="time" id="timeInput" class="border border-gray-300 px-3 py-2 rounded-md mb-4">
+        <button id="convertLocalToEpochBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Convert</button>
+        <div id="epochOutput" class="mt-4"></div>
+        <br>
+        <div class="flex space-x-4">
+            <button class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300" data-hours="0">Now</button>
+            <button class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300" data-hours="1">1hr ago</button>
+            <button class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300" data-hours="4">4hr ago</button>
+            <button class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300" data-hours="8">8hr ago</button>
+        </div>
+    </div>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
