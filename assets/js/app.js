@@ -6,10 +6,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const timeInput = document.getElementById("timeInput");
     const epochOutput = document.getElementById("epochOutput");
 
+    function msToEpoch() {
+        const msValue = parseInt(epochInput.value);
+        if (isNaN(msValue)) {
+            localOutput.textContent = "Conversion Error: Invalid time provided";
+            utcOutput.textContent = "";
+            return;
+        }
+        const epochTime = Math.floor(msValue / 1000);
+        epochInput.value = epochTime;
+        convertEpochToLocal();
+    }
+
     function convertEpochToLocal() {
         const epochValue = parseInt(epochInput.value);
         if (isNaN(epochValue)) {
-            localOutput.textContent = "Epoch Time: Invalid value provided";
+            localOutput.textContent = "Conversion Error: Invalid time provided";
+            utcOutput.textContent = "";
             return;
         }
         const date = new Date(epochValue * 1000);
@@ -38,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const epochTime = Date.parse(localInput) / 1000;
 
         if (isNaN(epochTime)) {
-            displayTime(epochOutput, "Epoch Time: Invalid date or time format");
+            epochOutput.textContent = "Conversion Error: Invalid date or time format";
         } else {
             displayTime(epochOutput, "Epoch Time: ", epochTime);
         }
@@ -81,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     document.getElementById("convertEpochToLocalBtn").addEventListener("click", convertEpochToLocal);
+    document.getElementById("convertMsToLocalBtn").addEventListener("click", msToEpoch);
     document.getElementById("convertLocalToEpochBtn").addEventListener("click", convertLocalToEpoch);
 
     const quickOptions = document.querySelectorAll(".quick-option");
