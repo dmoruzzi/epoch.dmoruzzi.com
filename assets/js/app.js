@@ -69,8 +69,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateOutputs(date) {
-        elements.localOutput.textContent = `Local Time: ${formatDate(date)}`;
-        elements.utcOutput.textContent = `UTC Time: ${formatDate(date, true)}`;
+        elements.localOutput.textContent = `${formatDate(date)}`;
+        elements.utcOutput.textContent = `${formatDate(date, true)}`;
     }
 
     function showError(element, message) {
