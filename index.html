@@ -8,19 +8,32 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col justify-center items-center">
     <h2 class="text-3xl font-semibold mb-3">Epoch Time Converter</h2>
+
+    <!-- Epoch Time Conversion Section -->
     <div class="container bg-white rounded-md shadow-md p-6 mb-6 w-full max-w-md">
         <label for="epochInput" class="block mb-2">Epoch Time:</label>
         <input type="text" id="epochInput" placeholder="Enter Epoch Time" class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4">
-        <button id="convertEpochToLocalBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Seconds</button>
-        <button id="convertMsToLocalBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Miliseconds</button>
+        <button id="convertEpochToLocalBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mb-2">Seconds</button>
+        <button id="convertMsToLocalBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Milliseconds</button>
         <div id="localOutput" class="mt-4"></div>
         <div id="utcOutput"></div>
     </div>
+
+    <!-- ISO 8601 Date String Conversion Section -->
+    <div class="container bg-white rounded-md shadow-md p-6 mb-6 w-full max-w-md">
+        <label for="isoInput" class="block mb-2">ISO 8601 Date String:</label>
+        <input type="text" id="isoInput" placeholder="Enter ISO 8601 Date String" class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4">
+        <button id="convertISOToLocalBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Convert ISO</button>
+        <div id="localOutput" class="mt-4"></div>
+        <div id="utcOutput"></div>
+    </div>
+
+    <!-- Local Date and Time Conversion Section -->
     <div class="container bg-white rounded-md shadow-md p-6 w-full max-w-md">
         <label for="dateInput" class="block mb-2">Local Date:</label>
-        <input type="date" id="dateInput" class="border border-gray-300 px-3 py-2 rounded-md mb-4">
+        <input type="date" id="dateInput" class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4">
         <label for="timeInput" class="block mb-2">Local Time:</label>
-        <input type="time" id="timeInput" class="border border-gray-300 px-3 py-2 rounded-md mb-4">
+        <input type="time" id="timeInput" class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4">
         <button id="convertLocalToEpochBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Convert</button>
         <div id="epochOutput" class="mt-4"></div>
         <br>
@@ -31,6 +44,7 @@
             <button class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300" data-hours="8">8hr ago</button>
         </div>
     </div>
+
     <script src="assets/js/app.js"></script>
 </body>
 </html>
