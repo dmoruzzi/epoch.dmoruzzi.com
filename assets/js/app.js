@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
     elements.convertMsToLocalBtn.addEventListener("click", msToEpoch);
     elements.convertLocalToEpochBtn.addEventListener("click", convertLocalToEpoch);
     elements.convertISOToLocalBtn.addEventListener("click", convertISOToEpoch);
-    elements.quickOptions.forEach(option => option.addEventListener("click", () => setQuickOption(parseInt(option.dataset.hours))));
+    elements.quickOptions.forEach(option => option.addEventListener("click", () => setQuickOption(parseInt(option.dataset.hours, 10))));
 
     // Initialize
     setQuickOption(0);
@@ -39,17 +39,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const date = new Date(epochValue * 1000);
         updateOutputs(date);
-        elements.isoInput.value = formatISO(date);
-        convertISOToEpoch();
+        elements.isoInput.value = formatISOUTC(date);
     }
 
     function convertLocalToEpoch() {
-        const localInput = `${elements.dateInput.value}T${elements.timeInput.value}${getTimezoneOffsetString()}`;
+        const localInput = `${elements.dateInput.value}T${elements.timeInput.value}.000${getTimezoneOffsetString()}`;
         const epochTime = Date.parse(localInput) / 1000;
 
         if (isNaN(epochTime)) return showError(elements.epochOutput, "Invalid date or time format");
         elements.isoInput.value = localInput;
-        convertISOToEpoch();
+        elements.epochInput.value = epochTime;
+        elements.epochOutput.textContent = `Epoch Time: ${epochTime}`;
     }
 
     function convertISOToEpoch() {
@@ -69,8 +69,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateOutputs(date) {
-        elements.localOutput.textContent = `${formatDate(date)}`;
-        elements.utcOutput.textContent = `${formatDate(date, true)}`;
+        elements.localOutput.textContent = formatDate(date);
+        elements.utcOutput.textContent = formatDate(date, true);
     }
 
     function showError(element, message) {
@@ -91,8 +91,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function formatISO(date) {
-        return date.toISOString().split('Z')[0] + formatTimezoneOffset();
+    function formatISOUTC(date) {
+        return date.toISOString().split('Z')[0] + "+0000";
     }
 
     function formatTime(date) {
