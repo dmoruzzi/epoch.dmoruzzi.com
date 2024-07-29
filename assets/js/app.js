@@ -50,6 +50,10 @@ document.addEventListener('DOMContentLoaded', function () {
         elements.isoInput.value = localInput;
         elements.epochInput.value = epochTime;
         elements.epochOutput.textContent = `Epoch Time: ${epochTime}`;
+
+        // display local time
+        const date = new Date(epochTime * 1000);
+        updateOutputs(date);
     }
 
     function convertISOToEpoch() {
