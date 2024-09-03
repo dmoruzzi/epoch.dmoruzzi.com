@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function convertISOToEpoch() {
-        const isoString = elements.isoInput.value;
+        const isoString = elements.isoInput.value.replace(/\s/g, '');
         const date = new Date(isoString);
 
         if (isNaN(date.getTime())) return showError(elements.localOutput, "Invalid ISO 8601 string");
