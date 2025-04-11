@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
         epochInput: document.getElementById("epochInput"),
         localOutput: document.getElementById("localOutput"),
         utcOutput: document.getElementById("utcOutput"),
+        utcOutput24hr: document.getElementById("utcOutput24hr"),
         dateInput: document.getElementById("dateInput"),
         timeInput: document.getElementById("timeInput"),
         epochOutput: document.getElementById("epochOutput"),
@@ -73,8 +74,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateOutputs(date) {
-        elements.localOutput.textContent = formatDate(date);
-        elements.utcOutput.textContent = formatDate(date, true);
+        elements.localOutput.textContent = formatDate(date = date, isUTC =false, hour12 = true);
+        elements.utcOutput.textContent = formatDate(date = date, isUTC = true, hour12 = true);
+        elements.utcOutput24hr.textContent = formatDate(date = date, isUTC = true, hour12 = false);
     }
 
     function showError(element, message) {
@@ -82,9 +84,10 @@ document.addEventListener('DOMContentLoaded', function () {
         elements.utcOutput.textContent = "";
     }
 
-    function formatDate(date, isUTC = false) {
+    function formatDate(date, isUTC = false, hour12 = true) {
         return date.toLocaleString('en-US', {
             timeZone: isUTC ? 'UTC' : undefined,
+            hour12: hour12,
             month: '2-digit',
             day: '2-digit',
             year: 'numeric',
