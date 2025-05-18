@@ -1,58 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Epoch Time Converter</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" integrity="sha512-wnea99uKIC3TJF7v4eKk4Y+lMz2Mklv18+r4na2Gn1abDRPPOeef95xTzdwGD9e6zXJBteMIhZ1+68QC5byJZw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col justify-center items-center">
-    <h2 class="text-3xl font-semibold mb-3">Epoch Time Converter</h2>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Time Converter | DMoruzzi</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+      integrity="sha512-wnea99uKIC3TJF7v4eKk4Y+lMz2Mklv18+r4na2Gn1abDRPPOeef95xTzdwGD9e6zXJBteMIhZ1+68QC5byJZw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
 
-    <!-- Epoch Time Conversion Section -->
-    <div class="container bg-white rounded-md shadow-md p-6 mb-6 w-full max-w-md">
+  <body class="bg-gray-100 min-h-screen p-6">
+    <h2 class="text-3xl font-semibold mb-6 text-center">Time Converter</h2>
+
+    <div class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+      <!-- Epoch Time Conversion Section -->
+      <div class="bg-white rounded-md shadow-md p-6">
         <label for="epochInput" class="block mb-2">Epoch Time:</label>
-        <input type="text" id="epochInput" placeholder="Enter Epoch Time" class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4">
-        <button id="convertEpochToLocalBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mb-2">Seconds</button>
-        <button id="convertMsToLocalBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Milliseconds</button>
+        <input
+          type="text"
+          id="epochInput"
+          placeholder="Enter Epoch Time"
+          class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4"
+        />
+        <button
+          id="convertEpochToLocalBtn"
+          class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mb-2 w-full"
+        >
+          Seconds
+        </button>
+        <button
+          id="convertMsToLocalBtn"
+          class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full"
+        >
+          Milliseconds
+        </button>
         <div id="localOutput" class="mt-4"></div>
         <div id="utcOutput"></div>
         <div id="utcOutput24hr"></div>
-    </div>
+      </div>
 
-    <!-- ISO 8601 Date String Conversion Section -->
-    <div class="container bg-white rounded-md shadow-md p-6 mb-6 w-full max-w-md">
-        <label for="isoInput" class="block mb-2">ISO 8601 Date String:</label>
-        <input type="text" id="isoInput" placeholder="Enter ISO 8601 Date String" class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4">
-        <button id="convertISOToLocalBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Convert ISO</button>
-        <div id="localOutput" class="mt-4"></div>
-        <div id="utcOutput"></div>
-    </div>
-
-    <!-- Local Date and Time Conversion Section -->.
-     <div class="container bg-white rounded-md shadow-md p-6 mb-6 w-full max-w-md">
+      <!-- Local Date and Time Conversion Section -->
+      <div class="bg-white rounded-md shadow-md p-6">
         <label for="dateInput" class="block mb-2">Local Date:</label>
-        <input type="date" id="dateInput" class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4">
+        <input
+          type="date"
+          id="dateInput"
+          class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4"
+        />
         <label for="timeInput" class="block mb-2">Local Time:</label>
-        <input type="time" id="timeInput" class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4">
-        <button id="convertLocalToEpochBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Convert</button>
+        <input
+          type="time"
+          id="timeInput"
+          class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4"
+        />
+        <button
+          id="convertLocalToEpochBtn"
+          class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full"
+        >
+          Convert
+        </button>
         <div id="epochOutput" class="mt-4"></div>
-        <br>
-        <div class="flex space-x-4">
-            <button class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300" data-hours="0">Now</button>
-            <button class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300" data-hours="1">1hr ago</button>
-            <button class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300" data-hours="4">4hr ago</button>
-            <button class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300" data-hours="8">8hr ago</button>
+        <div class="flex flex-wrap gap-2 mt-4">
+          <button
+            class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300"
+            data-hours="0"
+          >
+            Now
+          </button>
+          <button
+            class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300"
+            data-hours="1"
+          >
+            1hr ago
+          </button>
+          <button
+            class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300"
+            data-hours="4"
+          >
+            4hr ago
+          </button>
+          <button
+            class="quick-option bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300"
+            data-hours="8"
+          >
+            8hr ago
+          </button>
         </div>
-    </div>
+      </div>
 
-    <!-- UUID Generator Section -->
-    <div class="container bg-white rounded-md shadow-md p-6 mb-6 w-full max-w-md">
+      <!-- ISO 8601 Date String Conversion Section -->
+      <div class="bg-white rounded-md shadow-md p-6">
+        <label for="isoInput" class="block mb-2">ISO 8601 Date String:</label>
+        <input
+          type="text"
+          id="isoInput"
+          placeholder="Enter ISO 8601 Date String"
+          class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4"
+        />
+        <button
+          id="convertISOToLocalBtn"
+          class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full"
+        >
+          Convert ISO
+        </button>
+        <div id="localOutputISO" class="mt-4"></div>
+        <div id="utcOutputISO"></div>
+        <p class="text-sm text-gray-600 mt-4">
+          Click on 'Convert' in local time to convert to browser timezone.
+        </p>
+        <p class="text-sm text-gray-600 mt-4">
+          Click on 'Seconds' in epoch time to convert to browser timezone.
+        </p>
+      </div>
+
+      <!-- UUID Generator Section -->
+      <div class="bg-white rounded-md shadow-md p-6">
         <label for="UUIDv7Output" class="block mb-2">UUIDv7:</label>
-        <input type="text" id="UUIDv7Output" class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4">
-        <button id="reverseUUIDv7Btn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Reverse</button>
-        <button id="generateUUIDv7Btn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Randomize</button>
+        <input
+          type="text"
+          id="UUIDv7Output"
+          class="border border-gray-300 px-3 py-2 rounded-md w-full mb-4"
+        />
+        <button
+          id="reverseUUIDv7Btn"
+          class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full mb-2"
+        >
+          Reverse
+        </button>
+        <button
+          id="generateUUIDv7Btn"
+          class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full"
+        >
+          Randomize
+        </button>
+        <p class="text-sm text-gray-600 mt-4">
+          The initial 48 bits of the UUIDv7 encode the timestamp.
+        </p>
+      </div>
     </div>
     <script src="assets/js/app.js"></script>
-</body>
+  </body>
 </html>
