@@ -97,6 +97,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (isNaN(msValue)) return showError(elements.localOutput, "Invalid time provided");
         elements.epochInput.value = Math.floor(msValue / 1000);
         convertEpochToLocal();
+        
+        // Also update Local Date and Time input fields
+        const date = new Date(msValue);
+        if (!isNaN(date.getTime())) {
+            elements.dateInput.value = formatDateToString(date);
+            elements.timeInput.value = formatTime(date);
+        }
     }
 
     function generateUUIDv7(timestampMs = null) {
@@ -125,12 +132,35 @@ document.addEventListener('DOMContentLoaded', function () {
         const uuid = elements.UUIDv7Output.value;
         if (!uuid || uuid.length < 10) return;
         
-        const timeHex = uuid.replace(/-/g, '').slice(0, 12);
-        const epochMs = parseInt(timeHex, 16);
-        const epochSeconds = Math.floor(epochMs / 1000);
-        
-        elements.epochInput.value = epochSeconds;
-        convertEpochToLocal();
+        try {
+            const timeHex = uuid.replace(/-/g, '').slice(0, 12);
+            const epochMs = parseInt(timeHex, 16);
+            
+            if (isNaN(epochMs) || epochMs <= 0) {
+                console.error('Invalid UUIDv7 timestamp:', timeHex);
+                return;
+            }
+            
+            const epochSeconds = Math.floor(epochMs / 1000);
+            elements.epochInput.value = epochSeconds;
+            elements.epochMsInput.value = epochMs;
+            
+            // Create date object and update all outputs
+            const date = new Date(epochMs);
+            if (isNaN(date.getTime())) {
+                console.error('Invalid date from UUIDv7 timestamp:', epochMs);
+                return;
+            }
+            
+            updateOutputs(date);
+            elements.isoInput.value = formatISOUTC(date);
+            
+            // Update Local Date and Time input fields
+            elements.dateInput.value = formatDateToString(date);
+            elements.timeInput.value = formatTime(date);
+        } catch (error) {
+            console.error('Error converting UUIDv7 to epoch:', error);
+        }
     }
 
     function convertEpochToLocal() {
@@ -142,6 +172,10 @@ document.addEventListener('DOMContentLoaded', function () {
         
         updateOutputs(date);
         elements.isoInput.value = formatISOUTC(date)
+        
+        // Update Local Date and Time input fields
+        elements.dateInput.value = formatDateToString(date);
+        elements.timeInput.value = formatTime(date);
     }
 
     function convertLocalToEpoch() {
