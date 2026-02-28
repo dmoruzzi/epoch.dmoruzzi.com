@@ -1,122 +1,235 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Elements
     const elements = {
         epochInput: document.getElementById("epochInput"),
+        epochMsInput: document.getElementById("epochMsInput"),
         localOutput: document.getElementById("localOutput"),
         utcOutput: document.getElementById("utcOutput"),
         utcOutput24hr: document.getElementById("utcOutput24hr"),
+        isoTZOutput: document.getElementById("isoTZOutput"),
+        isoUTCOutput: document.getElementById("isoUTCOutput"),
         dateInput: document.getElementById("dateInput"),
         timeInput: document.getElementById("timeInput"),
-        epochOutput: document.getElementById("epochOutput"),
         isoInput: document.getElementById("isoInput"),
-        convertISOToLocalBtn: document.getElementById("convertISOToLocalBtn"),
+        localOutputISO: document.getElementById("localOutputISO"),
+        utcOutputISO: document.getElementById("utcOutputISO"),
         convertEpochToLocalBtn: document.getElementById("convertEpochToLocalBtn"),
         convertMsToLocalBtn: document.getElementById("convertMsToLocalBtn"),
-        convertLocalToEpochBtn: document.getElementById("convertLocalToEpochBtn"),
-        quickOptions: document.querySelectorAll(".quick-option"),
         UUIDv7Output: document.getElementById("UUIDv7Output"),
-        UUIDv7ReverseBtn: document.getElementById("reverseUUIDv7Btn"),
-        UUIDv7RandomizeBtn: document.getElementById("generateUUIDv7Btn")
+        UUIDv7RandomizeBtn: document.getElementById("generateUUIDv7Btn"),
+        copyEpochBtn: document.getElementById("copyEpochBtn"),
+        copyEpochMsBtn: document.getElementById("copyEpochMsBtn"),
+        copyUUIDBtn: document.getElementById("copyUUIDBtn"),
+        clearLocalBtn: document.getElementById("clearLocalBtn"),
+        clearISOBtn: document.getElementById("clearISOBtn"),
+        toast: document.getElementById("toast")
     };
 
-    // Event Listeners
     elements.convertEpochToLocalBtn.addEventListener("click", convertEpochToLocal);
     elements.convertMsToLocalBtn.addEventListener("click", msToEpoch);
-    elements.convertLocalToEpochBtn.addEventListener("click", convertLocalToEpoch);
-    elements.convertISOToLocalBtn.addEventListener("click", convertISOToEpoch);
-    elements.quickOptions.forEach(option => option.addEventListener("click", () => setQuickOption(parseInt(option.dataset.hours, 10))));
-    elements.UUIDv7RandomizeBtn.addEventListener("click", () => elements.UUIDv7Output.value = format_UUIDv7());
-    elements.UUIDv7ReverseBtn.addEventListener("click", convertUUIDv7ToEpoch);
+    elements.UUIDv7RandomizeBtn.addEventListener("click", generateRandomUUIDv7);
+    elements.copyEpochBtn.addEventListener("click", () => copyToClipboard(elements.epochInput.value));
+    elements.copyEpochMsBtn.addEventListener("click", () => copyToClipboard(elements.epochMsInput.value));
+    elements.copyUUIDBtn.addEventListener("click", () => copyToClipboard(elements.UUIDv7Output.value));
+    elements.clearLocalBtn.addEventListener("click", () => clearLocal());
+    elements.clearISOBtn.addEventListener("click", () => clearISO());
 
-    // Initialize
+    elements.localOutput.addEventListener("click", function() {
+        copyToClipboard(this.textContent.replace('Local: ', ''));
+    });
+    elements.utcOutput.addEventListener("click", function() {
+        copyToClipboard(this.textContent.replace('UTC: ', ''));
+    });
+    elements.utcOutput24hr.addEventListener("click", function() {
+        copyToClipboard(this.textContent.replace('UTC 24hr: ', ''));
+    });
+    elements.isoTZOutput.addEventListener("click", function() {
+        copyToClipboard(this.textContent.replace('ISO Local: ', ''));
+    });
+    elements.isoUTCOutput.addEventListener("click", function() {
+        copyToClipboard(this.textContent.replace('ISO UTC: ', ''));
+    });
+
+    elements.localOutputISO.addEventListener("click", function() {
+        copyToClipboard(this.textContent.replace('Local: ', ''));
+    });
+    elements.utcOutputISO.addEventListener("click", function() {
+        copyToClipboard(this.textContent.replace('UTC: ', ''));
+    });
+
+    elements.epochInput.addEventListener("input", () => {
+        if (elements.epochInput.value.length > 0) {
+            elements.epochMsInput.value = Math.floor(parseInt(elements.epochInput.value, 10) * 1000);
+            convertEpochToLocal();
+        }
+    });
+
+    elements.epochMsInput.addEventListener("input", () => {
+        if (elements.epochMsInput.value.length > 0) {
+            elements.epochInput.value = Math.floor(parseInt(elements.epochMsInput.value, 10) / 1000);
+            convertEpochToLocal();
+        }
+    });
+
+    elements.UUIDv7Output.addEventListener("input", () => {
+        if (elements.UUIDv7Output.value.length > 0) convertUUIDv7ToEpoch();
+    });
+
+    elements.isoInput.addEventListener("input", () => {
+        if (elements.isoInput.value.length > 0) convertISOToLocal();
+    });
+
+    [elements.dateInput, elements.timeInput].forEach(input => {
+        input.addEventListener("change", convertLocalToEpoch);
+        input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") convertLocalToEpoch();
+        });
+    });
+
     setQuickOption(0);
+    generateRandomUUIDv7();
 
-    // Functions
     function msToEpoch() {
-        const msValue = parseInt(elements.epochInput.value, 10);
+        const msValue = parseInt(elements.epochMsInput.value, 10);
         if (isNaN(msValue)) return showError(elements.localOutput, "Invalid time provided");
         elements.epochInput.value = Math.floor(msValue / 1000);
         convertEpochToLocal();
     }
 
-    function format_UUIDv7() {
-    const epochSeconds = parseInt(elements.epochInput.value, 10);
-    const ms = BigInt(epochSeconds) * 1000n; // seconds to milliseconds
-    const timeHex = ms.toString(16).padStart(12, '0'); // 12 char = 48 bits
-    const time = timeHex.padStart(12, '0'); // 12 char = 48 bits | timeHex
-    const randomBytes = crypto.getRandomValues(new Uint8Array(10)); // random 80 bits
-    randomBytes[0] = (randomBytes[0] & 0x0f) | 0x70; // version 7
-    randomBytes[2] = (randomBytes[2] & 0x3f) | 0x80; // variant 10xx
+    function generateUUIDv7(timestampMs = null) {
+        const ms = timestampMs ? BigInt(timestampMs) : BigInt(Date.now());
+        const timeHex = ms.toString(16).padStart(12, '0');
+        const randomBytes = crypto.getRandomValues(new Uint8Array(10));
+        randomBytes[0] = (randomBytes[0] & 0x0f) | 0x70;
+        randomBytes[2] = (randomBytes[2] & 0x3f) | 0x80;
 
-    const parts = [  // assemble the UUIDv7
-        time.slice(0, 8),
-        time.slice(8, 12),
-        [...randomBytes.slice(0, 2)].map(b => b.toString(16).padStart(2, '0')).join(''),
-        [...randomBytes.slice(2, 4)].map(b => b.toString(16).padStart(2, '0')).join(''),
-        [...randomBytes.slice(4)].map(b => b.toString(16).padStart(2, '0')).join('')
-    ];
+        const parts = [
+            timeHex.slice(0, 8),
+            timeHex.slice(8, 12),
+            [...randomBytes.slice(0, 2)].map(b => b.toString(16).padStart(2, '0')).join(''),
+            [...randomBytes.slice(2, 4)].map(b => b.toString(16).padStart(2, '0')).join(''),
+            [...randomBytes.slice(4)].map(b => b.toString(16).padStart(2, '0')).join('')
+        ];
 
-    return parts.join('-');
+        return parts.join('-');
+    }
+
+    function generateRandomUUIDv7() {
+        elements.UUIDv7Output.value = generateUUIDv7();
     }
 
     function convertUUIDv7ToEpoch() {
-        let ogUUIDv7 = elements.UUIDv7Output.value.slice();
-        let time = elements.UUIDv7Output.value.replace(/-/g, '').slice(0, 12); // 12 char = 48 bits
-        elements.epochInput.value = parseInt(time, 16) / 1000;
+        const uuid = elements.UUIDv7Output.value;
+        if (!uuid || uuid.length < 10) return;
+        
+        const timeHex = uuid.replace(/-/g, '').slice(0, 12);
+        const epochMs = parseInt(timeHex, 16);
+        const epochSeconds = Math.floor(epochMs / 1000);
+        
+        elements.epochInput.value = epochSeconds;
         convertEpochToLocal();
-        convertISOToEpoch();
-        elements.UUIDv7Output.value = ogUUIDv7;
     }
 
     function convertEpochToLocal() {
         const epochValue = parseInt(elements.epochInput.value, 10);
-        if (isNaN(epochValue)) return showError(elements.localOutput, "Invalid time provided");
+        if (isNaN(epochValue)) return showError(elements.localOutput, "Invalid epoch time");
 
         const date = new Date(epochValue * 1000);
+        if (isNaN(date.getTime())) return showError(elements.localOutput, "Invalid date");
+        
         updateOutputs(date);
-        elements.isoInput.value = formatISOUTC(date);
+        elements.isoInput.value = formatISOUTC(date).replace("+0000", "+00:00")
     }
 
     function convertLocalToEpoch() {
-        const localInput = `${elements.dateInput.value}T${elements.timeInput.value}.000${getTimezoneOffsetString()}`;
+        const dateVal = elements.dateInput.value;
+        const timeVal = elements.timeInput.value;
+        
+        if (!dateVal || !timeVal) return;
+
+        const localInput = `${dateVal}T${timeVal}.000${getTimezoneOffsetString()}`;
         const epochTime = Date.parse(localInput) / 1000;
 
-        if (isNaN(epochTime)) return showError(elements.epochOutput, "Invalid date or time format");
+        if (isNaN(epochTime)) return;
+        
         elements.isoInput.value = localInput;
         elements.epochInput.value = epochTime;
-        elements.epochOutput.textContent = `Epoch Time: ${epochTime}`;
+        elements.epochMsInput.value = epochTime * 1000;
 
-        // display local time
         const date = new Date(epochTime * 1000);
         updateOutputs(date);
     }
 
-    function convertISOToEpoch() {
+    function convertISOToLocal() {
         const isoString = elements.isoInput.value.replace(/\s/g, '');
-        const date = new Date(isoString);
+        if (!isoString) return clearISO();
 
-        if (isNaN(date.getTime())) return showError(elements.localOutput, "Invalid ISO 8601 string");
+        const date = new Date(isoString);
+        if (isNaN(date.getTime())) return showError(elements.localOutputISO, "Invalid ISO 8601 string");
 
         const epochTime = Math.floor(date.getTime() / 1000);
-        updateOutputs(date);
-        elements.epochOutput.textContent = `Epoch Time: ${epochTime}`;
-
-        // Update Local Date and Time inputs
+        updateISOOutputs(date);
         elements.dateInput.value = formatDateToString(date);
         elements.timeInput.value = formatTime(date);
         elements.epochInput.value = epochTime;
+        elements.epochMsInput.value = date.getTime();
+        updateOutputs(date);
     }
 
     function updateOutputs(date) {
-        elements.localOutput.textContent = formatDate(date = date, isUTC = false, hour12 = true);
-        elements.utcOutput.textContent = formatDate(date = date, isUTC = true, hour12 = true);
-        elements.utcOutput24hr.textContent = formatDate(date = date, isUTC = true, hour12 = false);
-        elements.UUIDv7Output.value = format_UUIDv7();
+        const epochSeconds = Math.floor(date.getTime() / 1000);
+        const epochMs = date.getTime();
+        elements.localOutput.innerHTML = `<strong>Local:</strong> ${formatDate(date, false, true)}`;
+        elements.isoTZOutput.innerHTML = `<strong>ISO Local:</strong> ${formatISOTZ(date)}`;
+        elements.utcOutput.innerHTML = `<strong>UTC:</strong> ${formatDate(date, true, true)}`;
+        elements.utcOutput24hr.innerHTML = `<strong>UTC 24hr:</strong> ${formatDate(date, true, false)}`;
+        elements.isoUTCOutput.innerHTML = `<strong>ISO UTC:</strong> ${formatISOUTC(date)}`;
+        elements.UUIDv7Output.value = generateUUIDv7(date.getTime());
+    }
+
+    function updateISOOutputs(date) {
+        elements.localOutputISO.innerHTML = `<strong>Local:</strong> ${formatDate(date, false, true)}`;
+        elements.utcOutputISO.innerHTML = `<strong>UTC:</strong> ${formatDate(date, true, true)}`;
+    }
+
+    function formatISOTZ(date) {
+        const year = date.getFullYear();
+        const month = pad(date.getMonth() + 1);
+        const day = pad(date.getDate());
+        const hours = pad(date.getHours());
+        const minutes = pad(date.getMinutes());
+        const seconds = pad(date.getSeconds());
+        const offset = date.getTimezoneOffset();
+        const sign = offset <= 0 ? '+' : '-';
+        const offsetHours = pad(Math.abs(Math.floor(offset / 60)));
+        const offsetMinutes = pad(Math.abs(offset % 60));
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000${sign}${offsetHours}:${offsetMinutes}`;
+    }
+
+    function formatISOUTC(date) {
+        const year = date.getUTCFullYear();
+        const month = pad(date.getUTCMonth() + 1);
+        const day = pad(date.getUTCDate());
+        const hours = pad(date.getUTCHours());
+        const minutes = pad(date.getUTCMinutes());
+        const seconds = pad(date.getUTCSeconds());
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000+0000`;
     }
 
     function showError(element, message) {
-        element.textContent = `Conversion Error: ${message}`;
-        elements.utcOutput.textContent = "";
+        element.innerHTML = `<span class="text-red-600">${message}</span>`;
+    }
+
+    function clearLocal() {
+        elements.dateInput.value = '';
+        elements.timeInput.value = '';
+    }
+
+    function clearISO() {
+        elements.isoInput.value = '';
+        elements.localOutputISO.textContent = '';
+        elements.utcOutputISO.textContent = '';
+        elements.isoTZOutput.textContent = '';
+        elements.isoUTCOutput.textContent = '';
     }
 
     function formatDate(date, isUTC = false, hour12 = true) {
@@ -131,10 +244,6 @@ document.addEventListener('DOMContentLoaded', function () {
             second: '2-digit',
             timeZoneName: 'short'
         });
-    }
-
-    function formatISOUTC(date) {
-        return date.toISOString().split('Z')[0] + "+0000";
     }
 
     function formatTime(date) {
@@ -169,7 +278,20 @@ document.addEventListener('DOMContentLoaded', function () {
         return `${sign}${pad(hours)}:${pad(minutes)}`;
     }
 
-    function formatTimezoneOffset() {
-        return getTimezoneOffsetString().replace(/:/g, '');
+    function copyToClipboard(text) {
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(() => {
+            showToast();
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+        });
+    }
+
+    function showToast() {
+        const toast = elements.toast;
+        toast.classList.remove('opacity-0');
+        setTimeout(() => {
+            toast.classList.add('opacity-0');
+        }, 2000);
     }
 });
