@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const elements = {
         epochInput: document.getElementById("epochInput"),
         epochMsInput: document.getElementById("epochMsInput"),
-        localOutput: document.getElementById("localOutput"),
+        localOutput12hr: document.getElementById("localOutput12hr"),
+        localOutput24hr: document.getElementById("localOutput24hr"),
         utcOutput: document.getElementById("utcOutput"),
         utcOutput24hr: document.getElementById("utcOutput24hr"),
         isoTZOutput: document.getElementById("isoTZOutput"),
@@ -33,11 +34,14 @@ document.addEventListener('DOMContentLoaded', function () {
     elements.clearLocalBtn.addEventListener("click", () => clearLocal());
     elements.clearISOBtn.addEventListener("click", () => clearISO());
 
-    elements.localOutput.addEventListener("click", function() {
-        copyToClipboard(this.textContent.replace('Local: ', ''));
+    elements.localOutput12hr.addEventListener("click", function() {
+        copyToClipboard(this.textContent.replace('Local 12hr: ', ''));
+    });
+    elements.localOutput24hr.addEventListener("click", function() {
+        copyToClipboard(this.textContent.replace('Local 24hr: ', ''));
     });
     elements.utcOutput.addEventListener("click", function() {
-        copyToClipboard(this.textContent.replace('UTC: ', ''));
+        copyToClipboard(this.textContent.replace('UTC 12hr: ', ''));
     });
     elements.utcOutput24hr.addEventListener("click", function() {
         copyToClipboard(this.textContent.replace('UTC 24hr: ', ''));
@@ -53,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
         copyToClipboard(this.textContent.replace('Local: ', ''));
     });
     elements.utcOutputISO.addEventListener("click", function() {
-        copyToClipboard(this.textContent.replace('UTC: ', ''));
+        copyToClipboard(this.textContent.replace('UTC 12hr: ', ''));
     });
 
     elements.epochInput.addEventListener("input", () => {
@@ -137,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (isNaN(date.getTime())) return showError(elements.localOutput, "Invalid date");
         
         updateOutputs(date);
-        elements.isoInput.value = formatISOUTC(date).replace("+0000", "+00:00")
+        elements.isoInput.value = formatISOUTC(date)
     }
 
     function convertLocalToEpoch() {
@@ -178,9 +182,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateOutputs(date) {
         const epochSeconds = Math.floor(date.getTime() / 1000);
         const epochMs = date.getTime();
-        elements.localOutput.innerHTML = `<strong>Local:</strong> ${formatDate(date, false, true)}`;
+        elements.localOutput12hr.innerHTML = `<strong>Local 12hr:</strong> ${formatDate(date, false, true)}`;
+        elements.localOutput24hr.innerHTML = `<strong>Local 24hr:</strong> ${formatDate(date, false, false)}`;
         elements.isoTZOutput.innerHTML = `<strong>ISO Local:</strong> ${formatISOTZ(date)}`;
-        elements.utcOutput.innerHTML = `<strong>UTC:</strong> ${formatDate(date, true, true)}`;
+        elements.utcOutput.innerHTML = `<strong>UTC 12hr:</strong> ${formatDate(date, true, true)}`;
         elements.utcOutput24hr.innerHTML = `<strong>UTC 24hr:</strong> ${formatDate(date, true, false)}`;
         elements.isoUTCOutput.innerHTML = `<strong>ISO UTC:</strong> ${formatISOUTC(date)}`;
         elements.UUIDv7Output.value = generateUUIDv7(date.getTime());
@@ -212,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const hours = pad(date.getUTCHours());
         const minutes = pad(date.getUTCMinutes());
         const seconds = pad(date.getUTCSeconds());
-        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000+0000`;
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000+00:00`;
     }
 
     function showError(element, message) {
@@ -295,3 +300,4 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 2000);
     }
 });
+
