@@ -13,8 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
         isoInput: document.getElementById("isoInput"),
         localOutputISO: document.getElementById("localOutputISO"),
         utcOutputISO: document.getElementById("utcOutputISO"),
-        convertEpochToLocalBtn: document.getElementById("convertEpochToLocalBtn"),
-        convertMsToLocalBtn: document.getElementById("convertMsToLocalBtn"),
         UUIDv7Output: document.getElementById("UUIDv7Output"),
         UUIDv7RandomizeBtn: document.getElementById("generateUUIDv7Btn"),
         copyEpochBtn: document.getElementById("copyEpochBtn"),
@@ -25,8 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
         toast: document.getElementById("toast")
     };
 
-    elements.convertEpochToLocalBtn.addEventListener("click", convertEpochToLocal);
-    elements.convertMsToLocalBtn.addEventListener("click", msToEpoch);
     elements.UUIDv7RandomizeBtn.addEventListener("click", generateRandomUUIDv7);
     elements.copyEpochBtn.addEventListener("click", () => copyToClipboard(elements.epochInput.value));
     elements.copyEpochMsBtn.addEventListener("click", () => copyToClipboard(elements.epochMsInput.value));
