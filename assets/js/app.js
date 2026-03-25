@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
         copyUUIDBtn: document.getElementById("copyUUIDBtn"),
         clearLocalBtn: document.getElementById("clearLocalBtn"),
         clearISOBtn: document.getElementById("clearISOBtn"),
+        clearEpochBtn: document.getElementById("clearEpochBtn"),
         toast: document.getElementById("toast")
     };
 
@@ -27,11 +28,75 @@ document.addEventListener('DOMContentLoaded', function () {
     elements.copyEpochBtn.addEventListener("click", () => copyToClipboard(elements.epochInput.value));
     elements.copyEpochMsBtn.addEventListener("click", () => copyToClipboard(elements.epochMsInput.value));
     elements.copyUUIDBtn.addEventListener("click", () => copyToClipboard(elements.UUIDv7Output.value));
-    elements.clearLocalBtn.addEventListener("click", () => clearLocal());
-    elements.clearISOBtn.addEventListener("click", () => clearISO());
+    elements.clearLocalBtn.addEventListener("click", () => {
+        clearLocal();
+        setQuickOption(0);
+        if (initialEpochFromUrl !== null) {
+            clearEpochParam();
+        }
+    });
+    elements.clearISOBtn.addEventListener("click", () => {
+        clearISO();
+        setQuickOption(0);
+        if (initialEpochFromUrl !== null) {
+            clearEpochParam();
+        }
+    });
+    elements.clearEpochBtn.addEventListener("click", () => {
+        elements.epochInput.value = '';
+        elements.epochMsInput.value = '';
+        elements.localOutput12hr.innerHTML = '';
+        elements.localOutput24hr.innerHTML = '';
+        elements.isoTZOutput.innerHTML = '';
+        elements.utcOutput.innerHTML = '';
+        elements.utcOutput24hr.innerHTML = '';
+        elements.isoUTCOutput.innerHTML = '';
+        clearEpochParam();
+        setQuickOption(0);
+    });
 
-    elements.localOutput12hr.addEventListener("click", function() {
-        copyToClipboard(this.textContent.replace('Local 12hr: ', ''));
+    const urlParams = new URLSearchParams(window.location.search);
+    let initialEpochFromUrl = null;
+
+    if (!urlParams.has('ms')) {
+        const epochParam = urlParams.get('epoch');
+        if (epochParam) {
+            const epoch = parseInt(epochParam, 10);
+            if (!isNaN(epoch)) {
+                initialEpochFromUrl = epoch;
+                elements.epochInput.value = epoch;
+                elements.epochMsInput.value = epoch * 1000;
+                convertEpochToLocal();
+            }
+        }
+    }
+
+    function clearEpochParam() {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.delete('epoch');
+        const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+        window.history.pushState({}, '', newUrl);
+        initialEpochFromUrl = null;
+    }
+
+    elements.epochInput.addEventListener("input", () => {
+        if (elements.epochInput.value.length > 0) {
+            elements.epochMsInput.value = Math.floor(parseInt(elements.epochInput.value, 10) * 1000);
+            convertEpochToLocal();
+            if (initialEpochFromUrl !== null && parseInt(elements.epochInput.value, 10) !== initialEpochFromUrl) {
+                clearEpochParam();
+            }
+        }
+    });
+
+    elements.epochMsInput.addEventListener("input", () => {
+        if (elements.epochMsInput.value.length > 0) {
+            elements.epochInput.value = Math.floor(parseInt(elements.epochMsInput.value, 10) / 1000);
+            convertEpochToLocal();
+            if (initialEpochFromUrl !== null && parseInt(elements.epochMsInput.value, 10) !== initialEpochFromUrl * 1000) {
+                clearEpochParam();
+            }
+        }
     });
     elements.localOutput24hr.addEventListener("click", function() {
         copyToClipboard(this.textContent.replace('Local 24hr: ', ''));
@@ -71,26 +136,44 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     elements.UUIDv7Output.addEventListener("input", () => {
-        if (elements.UUIDv7Output.value.length > 0) convertUUIDv7ToEpoch();
+        if (elements.UUIDv7Output.value.length > 0) {
+            convertUUIDv7ToEpoch();
+            if (initialEpochFromUrl !== null) {
+                clearEpochParam();
+            }
+        }
     });
 
     elements.isoInput.addEventListener("input", () => {
-        if (elements.isoInput.value.length > 0) convertISOToLocal();
+        if (elements.isoInput.value.length > 0) {
+            convertISOToLocal();
+            if (initialEpochFromUrl !== null) {
+                clearEpochParam();
+            }
+        }
     });
 
     [elements.dateInput, elements.timeInput].forEach(input => {
-        input.addEventListener("change", convertLocalToEpoch);
+        input.addEventListener("change", () => {
+            convertLocalToEpoch();
+            if (initialEpochFromUrl !== null) {
+                clearEpochParam();
+            }
+        });
         input.addEventListener("keypress", (e) => {
             if (e.key === "Enter") convertLocalToEpoch();
         });
     });
 
-    setQuickOption(0);
+    if (!initialEpochFromUrl) {
+        setQuickOption(0);
+    }
+
     generateRandomUUIDv7();
 
     function msToEpoch() {
         const msValue = parseInt(elements.epochMsInput.value, 10);
-        if (isNaN(msValue)) return showError(elements.localOutput, "Invalid time provided");
+        if (isNaN(msValue)) return showError(elements.localOutput12hr, "Invalid time provided");
         elements.epochInput.value = Math.floor(msValue / 1000);
         convertEpochToLocal();
         
@@ -161,10 +244,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function convertEpochToLocal() {
         const epochValue = parseInt(elements.epochInput.value, 10);
-        if (isNaN(epochValue)) return showError(elements.localOutput, "Invalid epoch time");
+        if (isNaN(epochValue)) return showError(elements.localOutput12hr, "Invalid epoch time");
 
         const date = new Date(epochValue * 1000);
-        if (isNaN(date.getTime())) return showError(elements.localOutput, "Invalid date");
+        if (isNaN(date.getTime())) return showError(elements.localOutput12hr, "Invalid date");
         
         updateOutputs(date);
         elements.isoInput.value = formatISOUTC(date)
@@ -257,6 +340,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function clearLocal() {
         elements.dateInput.value = '';
         elements.timeInput.value = '';
+        elements.epochInput.value = '';
+        elements.epochMsInput.value = '';
     }
 
     function clearISO() {
@@ -265,6 +350,8 @@ document.addEventListener('DOMContentLoaded', function () {
         elements.utcOutputISO.textContent = '';
         elements.isoTZOutput.textContent = '';
         elements.isoUTCOutput.textContent = '';
+        elements.epochInput.value = '';
+        elements.epochMsInput.value = '';
     }
 
     function formatDate(date, isUTC = false, hour12 = true) {
