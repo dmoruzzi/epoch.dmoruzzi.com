@@ -46,7 +46,10 @@
     <!-- Epoch Time Conversion Section -->
     <div class="converter-section container bg-white rounded-md shadow-md p-6 mb-6 w-full max-w-md">
       <div class="flex justify-between items-center mb-2">
-        <label for="epochInput" class="block">Epoch Time (s):</label>
+        <div class="flex gap-4 flex-1">
+          <label for="epochInput" class="block flex-1">Epoch Time (s):</label>
+          <label for="epochMsInput" class="block flex-1">Unix Time (ms):</label>
+        </div>
         <button id="clearEpochBtn" class="text-sm text-gray-500 hover:text-red-500" title="Clear">✕</button>
       </div>
       <div class="flex gap-4 mb-2">
@@ -59,9 +62,6 @@
           />
         </div>
         <div class="flex-1">
-          <div class="flex justify-between items-center mb-2">
-            <label for="epochMsInput" class="block">Unix Time (ms):</label>
-          </div>
           <input
             type="text"
             id="epochMsInput"
