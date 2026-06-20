@@ -98,27 +98,30 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
+    elements.localOutput12hr.addEventListener("click", function() {
+        copyToClipboard(this.textContent.replace(/^\s*Local 12hr:\s*/, ''));
+    });
     elements.localOutput24hr.addEventListener("click", function() {
-        copyToClipboard(this.textContent.replace('Local 24hr: ', ''));
+        copyToClipboard(this.textContent.replace(/^\s*Local 24hr:\s*/, ''));
     });
     elements.utcOutput.addEventListener("click", function() {
-        copyToClipboard(this.textContent.replace('UTC 12hr: ', ''));
+        copyToClipboard(this.textContent.replace(/^\s*UTC 12hr:\s*/, ''));
     });
     elements.utcOutput24hr.addEventListener("click", function() {
-        copyToClipboard(this.textContent.replace('UTC 24hr: ', ''));
+        copyToClipboard(this.textContent.replace(/^\s*UTC 24hr:\s*/, ''));
     });
     elements.isoTZOutput.addEventListener("click", function() {
-        copyToClipboard(this.textContent.replace('ISO Local: ', ''));
+        copyToClipboard(this.textContent.replace(/^\s*ISO Local:\s*/, ''));
     });
     elements.isoUTCOutput.addEventListener("click", function() {
-        copyToClipboard(this.textContent.replace('ISO UTC: ', ''));
+        copyToClipboard(this.textContent.replace(/^\s*ISO UTC:\s*/, ''));
     });
 
     elements.localOutputISO.addEventListener("click", function() {
-        copyToClipboard(this.textContent.replace('Local: ', ''));
+        copyToClipboard(this.textContent.replace(/^\s*Local:\s*/, ''));
     });
     elements.utcOutputISO.addEventListener("click", function() {
-        copyToClipboard(this.textContent.replace('UTC 12hr: ', ''));
+        copyToClipboard(this.textContent.replace(/^\s*UTC:\s*/, ''));
     });
 
     elements.epochInput.addEventListener("input", () => {
@@ -417,4 +420,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 2000);
     }
 });
-
