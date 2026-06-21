@@ -224,7 +224,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function generateRandomUUIDv7() {
-        elements.UUIDv7Output.value = generateUUIDv7();
+        const epochMs = parseInteger(elements.epochMsInput.value);
+        if (epochMs !== null) {
+            elements.UUIDv7Output.value = generateUUIDv7(epochMs);
+        } else {
+            elements.UUIDv7Output.value = generateUUIDv7();
+        }
     }
 
     function convertUUIDv7ToEpoch() {
