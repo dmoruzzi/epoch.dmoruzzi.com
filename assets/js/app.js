@@ -435,8 +435,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const hours = pad(date.getHours());
         const minutes = pad(date.getMinutes());
         const seconds = pad(date.getSeconds());
+        const milliseconds = pad(date.getMilliseconds(), 3);
 
-        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000${getTimezoneOffsetString(date)}`;
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}${getTimezoneOffsetString(date)}`;
     }
 
     function formatISOUTC(date) {
@@ -446,8 +447,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const hours = pad(date.getUTCHours());
         const minutes = pad(date.getUTCMinutes());
         const seconds = pad(date.getUTCSeconds());
+        const milliseconds = pad(date.getUTCMilliseconds(), 3);
 
-        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000+00:00`;
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}+00:00`;
     }
 
     function showError(element, message) {
@@ -555,8 +557,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return seconds.toFixed(3).replace(/\.?0+$/, '');
     }
 
-    function pad(value) {
-        return value.toString().padStart(2, '0');
+    function pad(value, length = 2) {
+        return value.toString().padStart(length, '0');
     }
 
     function padYear(value) {
